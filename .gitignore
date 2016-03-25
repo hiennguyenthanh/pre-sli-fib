@@ -1,0 +1,4 @@
+*.class
+!spec/*.class
+/.idea
+
