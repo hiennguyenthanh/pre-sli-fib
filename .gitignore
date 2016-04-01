@@ -1,4 +1,5 @@
+# Java class files
 *.class
-!spec/*.class
-.idea/
 
+# folder .idea/ in android studio
+.idea/

@@ -1,4 +1,0 @@
-*.class
-!spec/*.class
-.idea/
-
