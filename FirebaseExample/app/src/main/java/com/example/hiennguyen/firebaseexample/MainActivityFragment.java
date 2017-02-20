@@ -49,6 +49,12 @@ public class MainActivityFragment extends Fragment {
         mFoodDetails = new ArrayList<>();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        updateDataChange();
+
+        return view;
+    }
+
+    public void updateDataChange() {
         mDatabase.child("groceryItems").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -66,14 +72,11 @@ public class MainActivityFragment extends Fragment {
                 Log.e(TAG, "onCreateView: " + mFoodDetails.size());
             }
 
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
             }
         });
-
-        return view;
     }
 
     private List<String> getData() {
