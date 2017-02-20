@@ -25,26 +25,11 @@ import static com.google.android.gms.internal.zzt.TAG;
  */
 
 public class FirebaseAdapter extends RecyclerView.Adapter<FirebaseAdapter.ViewHolder> {
-    private List<FoodDetail> mData = new ArrayList<>();
+//    private List<FoodDetail> mData = new ArrayList<>();
+    private List<FoodDetail> mData;
 
-    public FirebaseAdapter(DatabaseReference mDatabase) {
-        mDatabase.child("groceryItems").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                mData.clear();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    FoodDetail foods = snapshot.getValue(FoodDetail.class);
-                    Log.e(TAG, "onDataChange: " + foods.getAddedByUser());
-                    mData.add(foods);
-                }
-                notifyDataSetChanged();
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
+    public FirebaseAdapter(List<FoodDetail> mData) {
+        this.mData = mData;
     }
 
     @Override

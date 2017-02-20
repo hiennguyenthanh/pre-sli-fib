@@ -1,6 +1,5 @@
 package com.example.hiennguyen.firebaseexample;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,6 +31,7 @@ public class MainActivityFragment extends Fragment {
     RecyclerView mRecyclerView;
 
     private List<String> mData;
+    private List<FoodDetail> mFoodDetails;
 
     private Unbinder mUnbind;
     private DatabaseReference mDatabase;
@@ -46,36 +46,32 @@ public class MainActivityFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         mUnbind = ButterKnife.bind(this, view);
+        mFoodDetails = new ArrayList<>();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
-//        mDatabase.child("groceryItems").addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                    FoodDetail foods = snapshot.getValue(FoodDetail.class);
-//                    Log.e(TAG, "onDataChange: " + foods.getAddedByUser());
-//                    mFoodDetails.add(foods);
-//
-//
-//                }
-//                FirebaseAdapter mAdapter = new FirebaseAdapter(mFoodDetails);
-//
-//                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-//                mRecyclerView.setAdapter(mAdapter);
-//                Log.e(TAG, "onCreateView: " + mFoodDetails.size());
-//            }
-//
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
+        mDatabase.child("groceryItems").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mFoodDetails.clear();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    FoodDetail foods = snapshot.getValue(FoodDetail.class);
+                    Log.e(TAG, "onDataChange: " + foods.getAddedByUser());
+                    mFoodDetails.add(foods);
+                }
+                mAdapter = new FirebaseAdapter(mFoodDetails);
+                mAdapter.notifyDataSetChanged();
+
+                mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                mRecyclerView.setAdapter(mAdapter);
+                Log.e(TAG, "onCreateView: " + mFoodDetails.size());
+            }
 
 
-        mAdapter = new FirebaseAdapter(mDatabase);
-        mRecyclerView.setAdapter(mAdapter);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         return view;
     }
