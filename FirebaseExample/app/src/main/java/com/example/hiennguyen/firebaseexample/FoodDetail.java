@@ -14,7 +14,9 @@ public class FoodDetail {
     public FoodDetail() {
     }
 
-    public FoodDetail(String name) {
+    public FoodDetail(String addedByUser, boolean completed, String name) {
+        this.addedByUser = addedByUser;
+        this.completed = completed;
         this.name = name;
     }
 
