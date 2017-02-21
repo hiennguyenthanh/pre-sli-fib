@@ -14,20 +14,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static com.google.android.gms.internal.zzt.TAG;
-
 /**
  * Created by hiennguyen on 20/02/2017
  */
-
 public class FirebaseAdapter extends RecyclerView.Adapter<FirebaseAdapter.ViewHolder> {
-//    private List<FoodDetail> mData = new ArrayList<>();
+    private static final String TAG = FirebaseAdapter.class.getSimpleName();
+
     private List<FoodDetail> mData;
 
     public FirebaseAdapter(List<FoodDetail> mData) {
