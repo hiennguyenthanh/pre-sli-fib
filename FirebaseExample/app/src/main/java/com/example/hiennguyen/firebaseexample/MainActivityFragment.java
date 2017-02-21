@@ -68,9 +68,13 @@ public class MainActivityFragment extends Fragment {
         mDatabase = FirebaseDatabase.getInstance().getReference();
         updateDataChange();
 
-        mBtnAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        return view;
+    }
+
+    @OnClick({R.id.btn_logout, R.id.btn_add_data})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_add_data:
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
                 alertDialog.setTitle("Add Data!");
                 alertDialog.setMessage("Add an item");
@@ -100,28 +104,24 @@ public class MainActivityFragment extends Fragment {
                 });
 
                 alertDialog.show();
-            }
-        });
+                break;
+            case R.id.btn_logout:
+                auth = FirebaseAuth.getInstance();
+                auth.signOut();
 
-        return view;
-    }
-
-    @OnClick(R.id.btn_logout)
-    public void onClick(View view) {
-        auth = FirebaseAuth.getInstance();
-        auth.signOut();
-
-        auth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = auth.getCurrentUser();
-                if (user == null) {
-                    Intent intent = new Intent(getContext(), AuthActivity.class);
-                    startActivity(intent);
-                    getActivity().finish();
-                }
-            }
-        });
+                auth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+                    @Override
+                    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                        FirebaseUser user = auth.getCurrentUser();
+                        if (user == null) {
+                            Intent intent = new Intent(getContext(), AuthActivity.class);
+                            startActivity(intent);
+                            getActivity().finish();
+                        }
+                    }
+                });
+                break;
+        }
     }
 
     public void updateDataChange() {
