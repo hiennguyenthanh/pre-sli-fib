@@ -8,6 +8,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +55,7 @@ public class MainActivityFragment extends Fragment {
     private DatabaseReference mDatabase;
     private FirebaseAdapter mAdapter;
     private FirebaseAuth auth;
+    private ProgressDialog progressBar;
 
     public MainActivityFragment() {
     }
@@ -64,6 +67,9 @@ public class MainActivityFragment extends Fragment {
 
         mUnbind = ButterKnife.bind(this, view);
         mFoodDetails = new ArrayList<>();
+        progressBar = new ProgressDialog(getContext());
+        progressBar.setMessage("Please wail...");
+        progressBar.show();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         updateDataChange();
@@ -140,6 +146,7 @@ public class MainActivityFragment extends Fragment {
                 mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
                 mRecyclerView.setAdapter(mAdapter);
                 Log.e(TAG, "onCreateView: " + mFoodDetails.size());
+                progressBar.dismiss();
             }
 
             @Override

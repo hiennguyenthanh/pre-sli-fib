@@ -5,6 +5,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -40,6 +41,7 @@ public class AuthActivityFragment extends Fragment {
 
     private Unbinder mUnbind;
     private FirebaseAuth mFirebaseAuth;
+    private ProgressDialog progressDialog;
 
     public AuthActivityFragment() {
     }
@@ -49,6 +51,7 @@ public class AuthActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_auth, container, false);
         mUnbind = ButterKnife.bind(this, view);
+        progressDialog = new ProgressDialog(getContext());
 
         mFirebaseAuth = FirebaseAuth.getInstance();
 
@@ -65,6 +68,8 @@ public class AuthActivityFragment extends Fragment {
     public void onClick() {
         String email = mInputEmail.getText().toString();
         String password = mInputPassword.getText().toString();
+        progressDialog.setMessage("Please wail...");
+        progressDialog.show();
 
         mFirebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -76,6 +81,7 @@ public class AuthActivityFragment extends Fragment {
                 } else {
                     Toast.makeText(getContext(), "Email or Password is incorrect", Toast.LENGTH_SHORT).show();
                 }
+                progressDialog.dismiss();
             }
         });
     }
