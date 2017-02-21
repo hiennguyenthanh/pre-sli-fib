@@ -1,5 +1,7 @@
 package com.example.hiennguyen.firebaseexample;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -7,6 +9,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -25,6 +29,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 
 /**
@@ -38,12 +43,16 @@ public class MainActivityFragment extends Fragment {
     @BindView(R.id.btn_add_data)
     FloatingActionButton mBtnAdd;
 
+    @BindView(R.id.btn_logout)
+    FloatingActionButton mBtnLogout;
+
     private List<String> mData;
     private List<FoodDetail> mFoodDetails;
 
     private Unbinder mUnbind;
     private DatabaseReference mDatabase;
     private FirebaseAdapter mAdapter;
+    private FirebaseAuth auth;
 
     public MainActivityFragment() {
     }
@@ -95,6 +104,24 @@ public class MainActivityFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @OnClick(R.id.btn_logout)
+    public void onClick(View view) {
+        auth = FirebaseAuth.getInstance();
+        auth.signOut();
+
+        auth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = auth.getCurrentUser();
+                if (user == null) {
+                    Intent intent = new Intent(getContext(), AuthActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                }
+            }
+        });
     }
 
     public void updateDataChange() {

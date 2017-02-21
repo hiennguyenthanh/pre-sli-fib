@@ -23,8 +23,16 @@
             android:id="@+id/btn_add_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:srcCompat="@android:drawable/ic_dialog_email"
+            app:srcCompat="@android:drawable/ic_input_add"
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"/>
+
+    <android.support.design.widget.FloatingActionButton
+            android:id="@+id/btn_logout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:srcCompat="@android:drawable/ic_delete"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"/>
 
 </RelativeLayout>
