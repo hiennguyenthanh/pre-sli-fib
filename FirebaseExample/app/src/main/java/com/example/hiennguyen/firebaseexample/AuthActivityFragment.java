@@ -64,26 +64,34 @@ public class AuthActivityFragment extends Fragment {
         return view;
     }
 
-    @OnClick(R.id.btn_login)
-    public void onClick() {
-        String email = mInputEmail.getText().toString();
-        String password = mInputPassword.getText().toString();
-        progressDialog.setMessage("Please wail...");
-        progressDialog.show();
+    @OnClick({R.id.btn_login, R.id.btn_fotgot_password})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_login:
+                String email = mInputEmail.getText().toString();
+                String password = mInputPassword.getText().toString();
+                progressDialog.setMessage("Please wail...");
+                progressDialog.show();
 
-        mFirebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-            @Override
-            public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()) {
-                    Intent intent = new Intent(getContext(), MainActivity.class);
-                    startActivity(intent);
-                    getActivity().finish();
-                } else {
-                    Toast.makeText(getContext(), "Email or Password is incorrect", Toast.LENGTH_SHORT).show();
-                }
-                progressDialog.dismiss();
-            }
-        });
+                mFirebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Intent intent = new Intent(getContext(), MainActivity.class);
+                            startActivity(intent);
+                            getActivity().finish();
+                        } else {
+                            Toast.makeText(getContext(), "Email or Password is incorrect", Toast.LENGTH_SHORT).show();
+                        }
+                        progressDialog.dismiss();
+                    }
+                });
+                break;
+            case R.id.btn_fotgot_password:
+                Intent intent = new Intent(getContext(), ForgotPassActivity.class);
+                startActivity(intent);
+                getActivity().finish();
+        }
     }
 
     @Override
