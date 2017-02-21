@@ -3,6 +3,7 @@ package com.example.hiennguyen.firebaseexample;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import android.support.v7.widget.RecyclerView;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -40,8 +42,33 @@ public class FirebaseAdapter extends RecyclerView.Adapter<FirebaseAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        FoodDetail foodDetails = mData.get(position);
+        final FoodDetail foodDetails = mData.get(position);
         holder.txtName.setText(foodDetails.getName());
+        holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+
+                mDatabase.child("groceryItems").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            FoodDetail foods = snapshot.getValue(FoodDetail.class);
+
+                            if (foodDetails.getName().equals(foods.getName())) {
+                                Log.e(TAG, "onDataChange: " + foods.getAddedByUser());
+                                snapshot.getRef().removeValue();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+        });
     }
 
     @Override
@@ -52,6 +79,9 @@ public class FirebaseAdapter extends RecyclerView.Adapter<FirebaseAdapter.ViewHo
     class ViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.txt_name)
         TextView txtName;
+
+        @BindView(R.id.btn_delete)
+        Button btnDelete;
 
         public ViewHolder(View itemView) {
             super(itemView);
