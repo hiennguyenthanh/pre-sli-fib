@@ -10,14 +10,16 @@ public class FoodDetail {
     private String addedByUser;
     private boolean completed;
     private String name;
+    private String image;
 
     public FoodDetail() {
     }
 
-    public FoodDetail(String addedByUser, boolean completed, String name) {
+    public FoodDetail(String addedByUser, boolean completed, String name, String image) {
         this.addedByUser = addedByUser;
         this.completed = completed;
         this.name = name;
+        this.image = image;
     }
 
     public String getAddedByUser() {
@@ -42,5 +44,13 @@ public class FoodDetail {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

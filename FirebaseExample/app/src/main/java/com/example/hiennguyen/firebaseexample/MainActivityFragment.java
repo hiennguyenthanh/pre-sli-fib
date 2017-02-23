@@ -1,5 +1,7 @@
 package com.example.hiennguyen.firebaseexample;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -7,14 +9,18 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +30,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +61,13 @@ public class MainActivityFragment extends Fragment {
     private FirebaseAdapter mAdapter;
     private FirebaseAuth auth;
     private ProgressDialog progressBar;
+    private StorageReference mStorageRef;
+    private FirebaseStorage mFirebaseStorage;
+    private OnGetImageStorage onListener;
+
+    public void setOnListener(OnGetImageStorage onListener) {
+        this.onListener = onListener;
+    }
 
     public MainActivityFragment() {
     }
@@ -73,6 +85,9 @@ public class MainActivityFragment extends Fragment {
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
         updateDataChange();
+
+        mFirebaseStorage = FirebaseStorage.getInstance();
+        mStorageRef = mFirebaseStorage.getReference();
 
         return view;
     }
@@ -93,12 +108,23 @@ public class MainActivityFragment extends Fragment {
                 alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        String item = input.getText().toString();
+                        final String item = input.getText().toString();
                         if (item.equals(""))
                             return;
 
-                        FoodDetail foodDetail = new FoodDetail("test@test.com", false, item);
-                        mDatabase.child("groceryItems").child(item).setValue(foodDetail);
+                        uploadFileLocal();
+
+                        onListener = new OnGetImageStorage() {
+                            @Override
+                            public void onGetImage(Uri uri) {
+                                FoodDetail foodDetail = new FoodDetail("test@test.com", false, item, uri.toString());
+                                mDatabase.child("groceryItems").child(item).setValue(foodDetail);
+                            }
+                        };
+
+                        setOnListener(onListener);
+
+
                     }
                 });
 
@@ -119,7 +145,7 @@ public class MainActivityFragment extends Fragment {
                     @Override
                     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                         FirebaseUser user = auth.getCurrentUser();
-                        if (user == null) {
+                        if (user == null && getActivity() != null) {
                             Intent intent = new Intent(getContext(), AuthActivity.class);
                             startActivity(intent);
                             getActivity().finish();
@@ -154,6 +180,30 @@ public class MainActivityFragment extends Fragment {
 
             }
         });
+    }
+
+
+    public void uploadFileLocal() {
+            Uri uri = Uri.parse("android.resource://" + getContext().getPackageName() + "/" + R.raw.ando);
+            StorageReference storageReference = mStorageRef.child("images/" + uri.getLastPathSegment());
+
+            storageReference.putFile(uri)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Uri uri = taskSnapshot.getDownloadUrl();
+                            Log.e(TAG, "onSuccess: " + uri);
+                            if (onListener != null) {
+                                onListener.onGetImage(uri);
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.e(TAG, "onFailure: " + e.getMessage());
+                        }
+                    });
     }
 
     private List<String> getData() {
