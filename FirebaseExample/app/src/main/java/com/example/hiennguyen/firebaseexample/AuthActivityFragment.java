@@ -36,6 +36,9 @@ public class AuthActivityFragment extends Fragment {
     @BindView(R.id.btn_login)
     Button mBtnLogin;
 
+    @BindView(R.id.btn_registration)
+    Button mBtnRegister;
+
     @BindView(R.id.btn_fotgot_password)
     TextView mBtnForgotPass;
 
@@ -64,7 +67,7 @@ public class AuthActivityFragment extends Fragment {
         return view;
     }
 
-    @OnClick({R.id.btn_login, R.id.btn_fotgot_password})
+    @OnClick({R.id.btn_login, R.id.btn_fotgot_password, R.id.btn_registration})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_login:
@@ -81,7 +84,7 @@ public class AuthActivityFragment extends Fragment {
                             startActivity(intent);
                             getActivity().finish();
                         } else {
-                            Toast.makeText(getContext(), "Email or Password is incorrect", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                         progressDialog.dismiss();
                     }
@@ -91,6 +94,12 @@ public class AuthActivityFragment extends Fragment {
                 Intent intent = new Intent(getContext(), ForgotPassActivity.class);
                 startActivity(intent);
                 getActivity().finish();
+                break;
+            case R.id.btn_registration:
+                Intent intent1 = new Intent(getContext(), RegisterActivity.class);
+                startActivity(intent1);
+                getActivity().finish();
+                break;
         }
     }
 
