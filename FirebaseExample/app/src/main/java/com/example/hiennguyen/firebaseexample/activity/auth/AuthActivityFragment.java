@@ -1,15 +1,10 @@
-package com.example.hiennguyen.firebaseexample;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
+package com.example.hiennguyen.firebaseexample.activity.auth;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +12,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.hiennguyen.firebaseexample.R;
+import com.example.hiennguyen.firebaseexample.activity.main.MainActivity;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,6 +29,7 @@ import butterknife.Unbinder;
  * A placeholder fragment containing a simple view.
  */
 public class AuthActivityFragment extends Fragment {
+
     @BindView(R.id.ed_input_email)
     EditText mInputEmail;
 
@@ -70,22 +73,14 @@ public class AuthActivityFragment extends Fragment {
             case R.id.btn_login:
                 String email = mInputEmail.getText().toString();
                 String password = mInputPassword.getText().toString();
-                progressDialog.setMessage("Please wail...");
+                progressDialog.setMessage(getResources().getString(R.string.message_progress_dialog));
                 progressDialog.show();
 
-                mFirebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Intent intent = new Intent(getContext(), MainActivity.class);
-                            startActivity(intent);
-                            getActivity().finish();
-                        } else {
-                            Toast.makeText(getContext(), "Email or Password is incorrect", Toast.LENGTH_SHORT).show();
-                        }
-                        progressDialog.dismiss();
-                    }
-                });
+                // TODO: Validate email and password
+
+                // Sign in
+                signInWithEmailAndPassword(email, password);
+
                 break;
             case R.id.btn_fotgot_password:
                 Intent intent = new Intent(getContext(), ForgotPassActivity.class);
@@ -98,5 +93,30 @@ public class AuthActivityFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         mUnbind.unbind();
+    }
+
+    /**
+     * Sign in app with email and password used firebase.
+     *
+     * @param email    The email of user
+     * @param password The password of user
+     */
+    private void signInWithEmailAndPassword(String email, String password) {
+        mFirebaseAuth.signInWithEmailAndPassword(email, password)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            Intent intent = new Intent(getContext(), MainActivity.class);
+                            startActivity(intent);
+                            getActivity().finish();
+                        } else {
+                            Toast.makeText(getContext(),
+                                    getResources().getString(R.string.message_email_pass_incorrect),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                        progressDialog.dismiss();
+                    }
+                });
     }
 }

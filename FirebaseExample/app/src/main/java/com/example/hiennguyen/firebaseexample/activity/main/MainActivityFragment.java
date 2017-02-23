@@ -1,20 +1,12 @@
-package com.example.hiennguyen.firebaseexample;
-
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+package com.example.hiennguyen.firebaseexample.activity.main;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -24,7 +16,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
+
+import com.example.hiennguyen.firebaseexample.activity.auth.AuthActivity;
+import com.example.hiennguyen.firebaseexample.adapter.FirebaseAdapter;
+import com.example.hiennguyen.firebaseexample.model.FoodDetail;
+import com.example.hiennguyen.firebaseexample.R;
+import com.example.hiennguyen.firebaseexample.utilities.PreferenceUtil;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +42,10 @@ import butterknife.Unbinder;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment {
+
     private static final String TAG = MainActivityFragment.class.getSimpleName();
+    private static final String BLANK = "";
+
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
@@ -68,7 +75,7 @@ public class MainActivityFragment extends Fragment {
         mUnbind = ButterKnife.bind(this, view);
         mFoodDetails = new ArrayList<>();
         progressBar = new ProgressDialog(getContext());
-        progressBar.setMessage("Please wail...");
+        progressBar.setMessage(getString(R.string.message_progress_dialog));
         progressBar.show();
 
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -82,27 +89,28 @@ public class MainActivityFragment extends Fragment {
         switch (view.getId()) {
             case R.id.btn_add_data:
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
-                alertDialog.setTitle("Add Data!");
-                alertDialog.setMessage("Add an item");
+                alertDialog.setTitle(getString(R.string.label_add_data));
+                alertDialog.setMessage(getString(R.string.label_add_item));
 
                 final EditText input = new EditText(getContext());
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                LinearLayout.LayoutParams layoutParams =
+                        new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
                 input.setLayoutParams(layoutParams);
                 alertDialog.setView(input);
 
-                alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                alertDialog.setPositiveButton(getString(R.string.label_yes), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String item = input.getText().toString();
-                        if (item.equals(""))
+                        if (BLANK.equals(item))
                             return;
 
                         FoodDetail foodDetail = new FoodDetail("test@test.com", false, item);
-                        mDatabase.child("groceryItems").child(item).setValue(foodDetail);
+                        mDatabase.child(PreferenceUtil.PREF_GROCERY_ITEMS).child(item).setValue(foodDetail);
                     }
                 });
 
-                alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                alertDialog.setNegativeButton(getString(R.string.label_no), new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         dialogInterface.dismiss();
@@ -131,7 +139,7 @@ public class MainActivityFragment extends Fragment {
     }
 
     public void updateDataChange() {
-        mDatabase.child("groceryItems").addValueEventListener(new ValueEventListener() {
+        mDatabase.child(PreferenceUtil.PREF_GROCERY_ITEMS).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 mFoodDetails.clear();

@@ -1,10 +1,4 @@
-package com.example.hiennguyen.firebaseexample;
-
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+package com.example.hiennguyen.firebaseexample.adapter;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,6 +7,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.example.hiennguyen.firebaseexample.model.FoodDetail;
+import com.example.hiennguyen.firebaseexample.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 

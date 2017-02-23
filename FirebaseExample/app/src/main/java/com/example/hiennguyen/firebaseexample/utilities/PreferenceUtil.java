@@ -6,6 +6,7 @@ public class PreferenceUtil {
 
     public static final String PREF_TOKEN = "cPrefToken";
     public static final String PREF_USER_UUID = "mPrefUserUUID";
+    public static final String PREF_GROCERY_ITEMS = "groceryItems";
 
     private static SharedPreferences sharedPreferences = null;
 

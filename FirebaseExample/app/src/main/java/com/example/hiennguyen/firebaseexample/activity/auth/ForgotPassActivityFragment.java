@@ -1,20 +1,21 @@
-package com.example.hiennguyen.firebaseexample;
-
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
+package com.example.hiennguyen.firebaseexample.activity.auth;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.example.hiennguyen.firebaseexample.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,6 +26,7 @@ import butterknife.Unbinder;
  * A placeholder fragment containing a simple view.
  */
 public class ForgotPassActivityFragment extends Fragment {
+
     @BindView(R.id.ed_input_email)
     EditText mInputEmail;
 
@@ -58,19 +60,11 @@ public class ForgotPassActivityFragment extends Fragment {
         switch (view.getId()) {
             case R.id.btn_reset_password:
                 String email = mInputEmail.getText().toString();
-                progressDialog.setMessage("Please wail...");
+                progressDialog.setMessage(getResources().getString(R.string.message_progress_dialog));
                 progressDialog.show();
-                auth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(getContext(), "Please following link that we have send to you to reset password", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(getContext(), "Failed reset password", Toast.LENGTH_SHORT).show();
-                        }
-                        progressDialog.dismiss();
-                    }
-                });
+
+                sendPasswordResetEmail(email);
+
                 break;
             case R.id.btn_back:
                 Intent intent = new Intent(getContext(), AuthActivity.class);
@@ -84,5 +78,28 @@ public class ForgotPassActivityFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         mUnbind.unbind();
+    }
+
+    /**
+     * Send password reset to user's email.
+     *
+     * @param email The user's email
+     */
+    private void sendPasswordResetEmail(String email) {
+        auth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(getContext(),
+                            getResources().getString(R.string.message_reset_pass_success),
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getContext(),
+                            getResources().getString(R.string.message_reset_pass_fail),
+                            Toast.LENGTH_SHORT).show();
+                }
+                progressDialog.dismiss();
+            }
+        });
     }
 }

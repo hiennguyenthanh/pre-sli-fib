@@ -1,4 +1,4 @@
-package com.example.hiennguyen.firebaseexample;
+package com.example.hiennguyen.firebaseexample.application;
 
 import android.app.Application;
 

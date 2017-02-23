@@ -1,10 +1,12 @@
-package com.example.hiennguyen.firebaseexample;
+package com.example.hiennguyen.firebaseexample.activity.main;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import com.example.hiennguyen.firebaseexample.R;
 
 public class MainActivity extends AppCompatActivity {
 
