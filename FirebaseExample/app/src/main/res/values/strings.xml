@@ -4,4 +4,6 @@
     <string name="title_activity_auth">AuthActivity</string>
     <string name="title_activity_forgot_pass">ForgotPassActivity</string>
     <string name="title_activity_register">RegisterActivity</string>
+    <string name="txt_string_add">Add</string>
+    <string name="txt_string_logout">Logout</string>
 </resources>
