@@ -12,7 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.List;
 
@@ -41,6 +44,9 @@ public class FirebaseAdapter extends RecyclerView.Adapter<FirebaseAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         final FoodDetail foodDetails = mData.get(position);
         holder.txtName.setText(foodDetails.getName());
+
+        Glide.with(holder.itemView.getContext()).load(foodDetails.getImage()).into(holder.mImage);
+        
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -79,6 +85,9 @@ public class FirebaseAdapter extends RecyclerView.Adapter<FirebaseAdapter.ViewHo
 
         @BindView(R.id.btn_delete)
         Button btnDelete;
+
+        @BindView(R.id.img_image)
+        ImageView mImage;
 
         public ViewHolder(View itemView) {
             super(itemView);

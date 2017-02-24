@@ -19,15 +19,18 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
@@ -47,11 +50,8 @@ public class MainActivityFragment extends Fragment {
     @BindView(R.id.recycler_view)
     RecyclerView mRecyclerView;
 
-    @BindView(R.id.btn_add_data)
-    FloatingActionButton mBtnAdd;
-
     @BindView(R.id.btn_logout)
-    FloatingActionButton mBtnLogout;
+    Button mBtnLogout;
 
     private List<String> mData;
     private List<FoodDetail> mFoodDetails;
@@ -78,6 +78,8 @@ public class MainActivityFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         mUnbind = ButterKnife.bind(this, view);
+        setHasOptionsMenu(true);
+
         mFoodDetails = new ArrayList<>();
         progressBar = new ProgressDialog(getContext());
         progressBar.setMessage("Please wail...");
@@ -92,10 +94,34 @@ public class MainActivityFragment extends Fragment {
         return view;
     }
 
-    @OnClick({R.id.btn_logout, R.id.btn_add_data})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.btn_add_data:
+    @OnClick(R.id.btn_logout)
+    public void onClick() {
+        auth = FirebaseAuth.getInstance();
+        auth.signOut();
+
+        auth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = auth.getCurrentUser();
+                if (user == null && getActivity() != null) {
+                    Intent intent = new Intent(getContext(), AuthActivity.class);
+                    startActivity(intent);
+                    getActivity().finish();
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_main, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.action_add:
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(getContext());
                 alertDialog.setTitle("Add Data!");
                 alertDialog.setMessage("Add an item");
@@ -136,23 +162,9 @@ public class MainActivityFragment extends Fragment {
                 });
 
                 alertDialog.show();
-                break;
-            case R.id.btn_logout:
-                auth = FirebaseAuth.getInstance();
-                auth.signOut();
-
-                auth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
-                    @Override
-                    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                        FirebaseUser user = auth.getCurrentUser();
-                        if (user == null && getActivity() != null) {
-                            Intent intent = new Intent(getContext(), AuthActivity.class);
-                            startActivity(intent);
-                            getActivity().finish();
-                        }
-                    }
-                });
-                break;
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
