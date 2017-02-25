@@ -85,6 +85,7 @@ public class MainActivityFragment extends Fragment {
         progressBar.setMessage("Please wail...");
         progressBar.show();
 
+        auth = FirebaseAuth.getInstance();
         mDatabase = FirebaseDatabase.getInstance().getReference();
         updateDataChange();
 
@@ -96,7 +97,6 @@ public class MainActivityFragment extends Fragment {
 
     @OnClick(R.id.btn_logout)
     public void onClick() {
-        auth = FirebaseAuth.getInstance();
         auth.signOut();
 
         auth.addAuthStateListener(new FirebaseAuth.AuthStateListener() {
@@ -149,8 +149,6 @@ public class MainActivityFragment extends Fragment {
                         };
 
                         setOnListener(onListener);
-
-
                     }
                 });
 
@@ -231,8 +229,8 @@ public class MainActivityFragment extends Fragment {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
+    public void onDestroyView() {
+        super.onDestroyView();
         mUnbind.unbind();
     }
 }
